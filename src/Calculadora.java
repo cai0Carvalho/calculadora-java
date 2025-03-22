@@ -16,6 +16,7 @@ public class Calculadora {
     Color preto = new Color(28,28,28);
     Color laranja = new Color(255, 149, 0);
 
+    // Definindo o layout dos botões
     String [] botoes = {
         "", "","","←",
         "AC", "+/-", "%", "÷",
@@ -24,17 +25,19 @@ public class Calculadora {
         "1", "2", "3", "+", 
         "0", ".", "√", "=", 
     };
+     // Definindo os operadores à direita e os botões topo da calculadora
     String[] simbolosDireita = {"÷", "×", "-", "+", "="};
     String[] simbolosTopo = {"AC", "+/-", "%", "←"};
 
     // Título da janela
     JFrame frame = new JFrame("Calculadora");
 
+    // Criando o painel para exibir os números e resultados
     JLabel displayLabel = new JLabel();
     JPanel displayPanel = new JPanel();
     JPanel buttonsPanel = new JPanel();
 
-    // A+B, A-B, A*B, A/B
+    // Variáveis para armazenar os números inseridos
     String A = "0";
     String operador = null;
     String B = null;
@@ -48,6 +51,7 @@ public class Calculadora {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
+        // Configuração do display (painel onde aparece o número)
         displayLabel.setBackground(preto);
         displayLabel.setForeground(Color.white);
         displayLabel.setFont(new Font("Arial", Font.PLAIN, 80));
@@ -55,17 +59,20 @@ public class Calculadora {
         displayLabel.setText("0");
         displayLabel.setOpaque(true);
 
+        // Painel do display (onde o número é exibido)
         displayPanel.setLayout(new BorderLayout());
         displayPanel.add(displayLabel);
         frame.add(displayPanel, BorderLayout.NORTH);
 
+        // Configuração do painel de botões
         buttonsPanel.setLayout(new GridLayout(6,4));
         buttonsPanel.setBackground(preto);
         frame.add(buttonsPanel);
 
+        // Loop para adicionar cada botão à interface
         for(String valorBotao : botoes){
             
-            JButton botao = new JButton(valorBotao);
+            //tratamento de botões vazios
             if (valorBotao.equals("") || valorBotao == null) {
                 JButton botaoVazio = new JButton();
                 botaoVazio.setBackground(preto);
@@ -75,10 +82,13 @@ public class Calculadora {
                 buttonsPanel.add(botaoVazio);
                 continue;
             }
+            // Criando o botão normal
+            JButton botao = new JButton(valorBotao);
             botao.setFont(new Font("Arial", Font.PLAIN, 30));
             botao.setFocusable(false);
             botao.setBorder(new LineBorder(preto));
 
+            // Definindo o estilo dos botões com base no valor 
             if(Arrays.asList(simbolosTopo).contains(valorBotao)){
                 botao.setBackground(cinzaClaro);
                 botao.setForeground(preto);
@@ -89,6 +99,7 @@ public class Calculadora {
                 botao.setBackground(cinzaEscuro);
                 botao.setForeground(Color.white);
             }
+            // Adicionando o botão ao painel de botões
             buttonsPanel.add(botao);
 
              // Ação do botão
@@ -121,10 +132,11 @@ public class Calculadora {
                                         displayLabel.setText(removerZeroDecimal(numA/numB));
                                     }
                                 }
-                                limpar();
+                                limpar(); // Limpar as variáveis A, B e operador
                             }
                         }
                         else if ("+-×÷".contains(valorBotao)){
+                            // Se for um operador (+, -, ×, ÷), guarda o valor de A e seleciona o operador
                             if(operador == null){
                                 A = displayLabel.getText();
                                 displayLabel.setText("0");
@@ -133,6 +145,7 @@ public class Calculadora {
                             operador = valorBotao;
                         }
                     } 
+                     // Ações para os botões da parte superior (AC, +/-, %, ←)
                     else if (Arrays.asList(simbolosTopo).contains(valorBotao)){
                         if (valorBotao.equals("AC")){
                             limpar();
@@ -148,6 +161,7 @@ public class Calculadora {
                             numDisplay /= 100;
                             displayLabel.setText(removerZeroDecimal(numDisplay));
                         }
+                        // Remove o último dígito
                         else if (valorBotao.equals("←")) {  
                             String textoAtual = displayLabel.getText();
                             if (textoAtual.length() > 1) {
@@ -157,12 +171,13 @@ public class Calculadora {
                             }
                         }
                     } 
-                    else { //números ou .
+                    else { // Lógica para números e ponto
                         if (valorBotao.equals(".")){
                             if (!displayLabel.getText().contains(valorBotao)) {
                                 displayLabel.setText(displayLabel.getText() + valorBotao);
                             }
                         }
+                        // Calcula a raiz quadrada
                         else if (valorBotao.equals("√")){
                             double numDisplay = Double.parseDouble(displayLabel.getText());
                             String resultado = raiz(numDisplay);
@@ -180,21 +195,22 @@ public class Calculadora {
                 }
             });
         }
-        frame.setVisible(true);
+        frame.setVisible(true); // Tornar a janela visível
     }
-
+     // Função para limpar as variáveis
     void limpar() {
         A = "0";
         operador = null;
         B = null;
     }
-
+    // Função para remover o zero decimal (caso o número seja inteiro)
     String removerZeroDecimal (double numDisplay){
         if(numDisplay % 1 == 0){
             return Integer.toString((int) numDisplay);
         }
         return Double.toString(numDisplay);
     }
+    // Função para calcular a raiz quadrada
     String raiz(double numDisplay){
         if (numDisplay < 0){
             return "Erro";
