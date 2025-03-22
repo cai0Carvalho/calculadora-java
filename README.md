@@ -48,7 +48,7 @@ Esta calculadora implementa as principais operações matemáticas, incluindo:
 
 2. Abra o projeto na sua IDE.
 
-3. Compile e execute o arquivo App.java para abrir a interface gráfica da calculadora.
+3. Execute o arquivo App.java para abrir a interface gráfica da calculadora.
 
 Autor: Caio Carvalho
 
