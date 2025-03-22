@@ -21,7 +21,7 @@ public class Calculadora {
         "7", "8", "9", "×", 
         "4", "5", "6", "-", 
         "1", "2", "3", "+", 
-        "0", ".", " √", "=", 
+        "0", ".", "", "=", 
     };
     String[] simbolosDireita = {"÷", "×", "-", "+", "="};
     String[] simbolosTopo = {"AC", "+/-", "%"};
@@ -33,10 +33,14 @@ public class Calculadora {
     JPanel displayPanel = new JPanel();
     JPanel buttonsPanel = new JPanel();
 
+    // A+B, A-B, A*B, A/B
+    String A = "0";
+    String operador = null;
+    String B = null;
+
 
     // Construtor para inicializar a janela
     Calculadora() {
-        frame.setVisible(true);
         frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
@@ -58,12 +62,11 @@ public class Calculadora {
         buttonsPanel.setBackground(preto);
         frame.add(buttonsPanel);
 
-        for(int i = 0; i < botoes.length; i++){
-            JButton botao = new JButton();
-            String valorBotao = botoes[i];
+        for(String valorBotao : botoes){
+            JButton botao = new JButton(valorBotao);
             botao.setFont(new Font("Arial", Font.PLAIN, 30));
-            botao.setText(valorBotao);
             botao.setFocusable(false);
+            botao.setBorder(new LineBorder(preto));
 
             if(Arrays.asList(simbolosTopo).contains(valorBotao)){
                 botao.setBackground(cinzaClaro);
@@ -75,9 +78,95 @@ public class Calculadora {
                 botao.setBackground(cinzaEscuro);
                 botao.setForeground(Color.white);
             }
-
-
             buttonsPanel.add(botao);
+
+            botao.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e){
+                    JButton botao = (JButton) e.getSource();
+                    String valorBotao = botao.getText();
+
+                    if(Arrays.asList(simbolosDireita).contains(valorBotao)){
+                        if(valorBotao.equals("=")){
+                            if(A != null){
+                                B = displayLabel.getText();
+                                double numA = Double.parseDouble(A);
+                                double numB = Double.parseDouble(B);
+
+                                if(operador.equals("+")){
+                                    displayLabel.setText(removerZeroDecimal(numA+numB));
+                                }
+                                else if (operador.equals("-")){
+                                    displayLabel.setText(removerZeroDecimal(numA-numB));
+                                }
+                                else if (operador.equals("×")){
+                                    displayLabel.setText(removerZeroDecimal(numA*numB));
+                                }
+                                else if(operador.equals("÷")) {
+                                    if(numB == 0){
+                                        displayLabel.setText("Erro");
+                                    } else {
+                                        displayLabel.setText(removerZeroDecimal(numA/numB));
+                                    }
+                                }
+                                limpar();
+                            }
+                        }
+                        else if ("+-×÷√".contains(valorBotao)){
+                            if(operador == null){
+                                A = displayLabel.getText();
+                                displayLabel.setText("0");
+                                B = "0";
+                            }
+                            operador = valorBotao;
+                        }
+                    } 
+                    else if (Arrays.asList(simbolosTopo).contains(valorBotao)){
+                        if (valorBotao.equals("AC")){
+                            limpar();
+                            displayLabel.setText("0");
+                        }
+                        else if (valorBotao.equals("+/-")){
+                            double numDisplay = Double.parseDouble(displayLabel.getText());
+                            numDisplay *= -1;
+                            displayLabel.setText(removerZeroDecimal(numDisplay));
+                        }
+                        else if (valorBotao.equals("%")){
+                            double numDisplay = Double.parseDouble(displayLabel.getText());
+                            numDisplay /= 100;
+                            displayLabel.setText(removerZeroDecimal(numDisplay));
+                        }
+                    } 
+                    else { //números ou .
+                        if (valorBotao.equals(".")){
+                            if (!displayLabel.getText().contains(valorBotao)) {
+                                displayLabel.setText(displayLabel.getText() + valorBotao);
+                            }
+                        }
+                        else if("0123456789".contains(valorBotao)){
+
+                            if (displayLabel.getText().equals("0")){
+                                displayLabel.setText(valorBotao);
+                            } else {
+                                displayLabel.setText(displayLabel.getText() + valorBotao);
+                            }
+                        }
+                    }
+                }
+            });
         }
+        frame.setVisible(true);
+    }
+
+    void limpar() {
+        A = "0";
+        operador = null;
+        B = null;
+    }
+
+    String removerZeroDecimal (double numDisplay){
+        if(numDisplay % 1 == 0){
+            return Integer.toString((int) numDisplay);
+        }
+        return Double.toString(numDisplay);
     }
 }
